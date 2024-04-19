@@ -17,7 +17,28 @@
         "command": "reasonly8-notes.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "reasonly8-notes-activity",
+          "title": "Reasonly8 Notes",
+          "icon": "resources/extension-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "reasonly8-notes-activity": [
+        {
+          "id": "package-dependencies",
+          "name": "Dependencies"
+        },
+        {
+          "id": "package-outline",
+          "name": "Outline"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run compile",
