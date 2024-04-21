@@ -14,28 +14,24 @@
   "contributes": {
     "commands": [
       {
-        "command": "reasonly8-notes.helloWorld",
-        "title": "Hello World"
+        "command": "openNotes",
+        "title": "Open Reasonly8 Notes"
       }
     ],
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "reasonly8-notes-activity",
+          "id": "activitybar-extension",
           "title": "Reasonly8 Notes",
           "icon": "resources/extension-icon.svg"
         }
       ]
     },
     "views": {
-      "reasonly8-notes-activity": [
+      "activitybar-extension": [
         {
-          "id": "package-dependencies",
-          "name": "Dependencies"
-        },
-        {
-          "id": "package-outline",
-          "name": "Outline"
+          "id": "notesTree",
+          "name": "Notes Tree"
         }
       ]
     }
