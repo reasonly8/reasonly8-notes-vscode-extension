@@ -15,7 +15,7 @@ class TreeNode extends vscode.TreeItem {
     super(label, isDir ? Collapsed : None);
 
     if (!isDir) {
-      this.iconPath = path.resolve(__dirname, '../resources/md.svg');
+      this.iconPath = path.join(__dirname, '..', 'resources', 'md.svg');
     }
 
     this.tooltip = `${this.label}`;
@@ -29,7 +29,7 @@ class TreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 
   readonly onDidChangeTreeData: vscode.Event<TreeNode | null> = this._onDidChangeTreeData.event;
 
-  readonly notes = getNotesTree(path.resolve(__dirname, '../resources/notes'));
+  readonly notes = getNotesTree(path.join(__dirname, '..', 'resources', 'notes'));
 
   private treeNodes: TreeNode[] = this.notes.map(note => {
     return new TreeNode(note.label, note.type, note.id);

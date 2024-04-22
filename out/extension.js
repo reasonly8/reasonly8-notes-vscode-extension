@@ -40,7 +40,7 @@ class TreeNode extends vscode.TreeItem {
         this.type = type;
         this.id = id;
         if (!isDir) {
-            this.iconPath = path.resolve(__dirname, '../resources/md.svg');
+            this.iconPath = path.join(__dirname, '..', 'resources', 'md.svg');
         }
         this.tooltip = `${this.label}`;
     }
@@ -49,7 +49,7 @@ class TreeNode extends vscode.TreeItem {
 class TreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
     onDidChangeTreeData = this._onDidChangeTreeData.event;
-    notes = (0, getNoteTree_1.getNotesTree)(path.resolve(__dirname, '../resources/notes'));
+    notes = (0, getNoteTree_1.getNotesTree)(path.join(__dirname, '..', 'resources', 'notes'));
     treeNodes = this.notes.map(note => {
         return new TreeNode(note.label, note.type, note.id);
     });

@@ -26,13 +26,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNotesTree = void 0;
 const fs = __importStar(require("fs"));
 const genId_1 = require("./genId");
+const nodePath = __importStar(require("path"));
 function getNotesTree(path) {
-    function getDir(path, fullPath = path) {
+    function getDir(path, fullPath) {
         const item = {
             id: (0, genId_1.genId)(),
             label: path,
             type: 'unknown',
         };
+        console.log(fullPath);
         const stats = fs.statSync(fullPath);
         if (stats.isDirectory()) {
             item.type = 'directory';
@@ -44,10 +46,10 @@ function getNotesTree(path) {
             return item;
         }
         const chidlPathList = fs.readdirSync(fullPath);
-        item.children = chidlPathList.map(path => getDir(path, `${fullPath}/${path}`));
+        item.children = chidlPathList.map(path => getDir(path, nodePath.join(fullPath, path)));
         return item;
     }
-    const notesTree = getDir(path).children;
+    const notesTree = getDir(path, path).children;
     console.log(notesTree);
     return notesTree;
 }
