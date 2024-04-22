@@ -25,6 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
 const vscode = __importStar(require("vscode"));
+const path = __importStar(require("path"));
 // 定义一个节点类来表示树中的每个元素
 class TreeNode extends vscode.TreeItem {
     label;
@@ -49,14 +50,7 @@ class TreeDataProvider {
         new TreeNode('Parent2', vscode.TreeItemCollapsibleState.Collapsed),
     ];
     getTreeItem(element) {
-        return {
-            ...element,
-            // command: {
-            //   command: 'example.showMarkdown',
-            //   title: 'Show Markdown Content',
-            //   arguments: [element],
-            // },
-        };
+        return element;
     }
     getChildren(element) {
         if (!element) {
@@ -65,7 +59,7 @@ class TreeDataProvider {
         // 当元素是父节点时，返回子节点
         return [
             new TreeNode(`${element.label} -> Child1`, vscode.TreeItemCollapsibleState.None),
-            new TreeNode(`${element.label} -> Child3`, vscode.TreeItemCollapsibleState.None),
+            new TreeNode(`${element.label} -> Child2`, vscode.TreeItemCollapsibleState.None),
         ];
     }
 }
@@ -75,20 +69,48 @@ function activate(context) {
     const treeView = vscode.window.createTreeView('notesTree', {
         treeDataProvider,
     });
+    const markdownContent = `# Sample Markdown\n\nThis is a sample Markdown file.`;
+    const filePath = path.join(context.extensionPath, 'sample.md');
+    // Write Markdown content to file
+    // fs.writeFile(filePath, markdownContent, err => {
+    //   if (err) {
+    //     vscode.window.showErrorMessage('Failed to write Markdown file.');
+    //     return console.error(err);
+    //   }
+    //   vscode.window.showInformationMessage('Markdown file saved successfully!');
+    // });
     // 注册 TreeView 的点击事件处理程序
     treeView.onDidChangeSelection(event => {
         const selectedNode = event.selection[0];
         if (selectedNode && selectedNode.label.indexOf('Child') !== -1) {
-            // // 获取点击的节点信息
-            // const markdownContent = `# Test\n\nHello, World!`;
-            // // 在 Editor Area 中显示 Markdown 内容
-            // vscode.workspace
-            //   .openTextDocument({ content: markdownContent, language: 'markdown' })
-            //   .then(doc => {
-            //     vscode.window.showTextDocument(doc, { preview: false });
-            //   });
-            const markdownContent = `# Test\n\nHello, World!`;
-            showMarkdownContent(markdownContent);
+            console.log(selectedNode.label);
+            const name = selectedNode.label.indexOf('Child1') !== -1 ? 'sample1.md' : 'sample2.md';
+            const filePath = path.join(context.extensionPath, name);
+            console.log(filePath);
+            vscode.workspace.openTextDocument(vscode.Uri.file(filePath)).then(doc => {
+                vscode.window
+                    .showTextDocument(doc, {
+                    preview: true,
+                    preserveFocus: true,
+                })
+                    .then(editor => {
+                    editor
+                        .edit(editBuilder => {
+                        // Do nothing, as we don't want to make any changes
+                    })
+                        .then(success => {
+                        if (success) {
+                            vscode.window.showInformationMessage('Markdown file opened in read-only mode.');
+                        }
+                        else {
+                            vscode.window.showErrorMessage('Failed to open Markdown file in read-only mode.');
+                        }
+                    });
+                });
+            }, error => {
+                vscode.window.showErrorMessage('Failed to open Markdown file in editor.');
+                console.error(error);
+            });
         }
     });
     const disposable = vscode.commands.registerCommand('openNotes', () => {
@@ -100,36 +122,4 @@ exports.activate = activate;
 // 当扩展被禁用时，这个方法会被调用
 function deactivate() { }
 exports.deactivate = deactivate;
-// 显示 Markdown 内容
-function showMarkdownContent(content) {
-    const panel = vscode.window.createWebviewPanel('markdownPreview', 'Markdown Preview', vscode.ViewColumn.Active, {
-        enableScripts: true,
-        retainContextWhenHidden: true,
-    });
-    panel.webview.html = `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Markdown Preview</title>
-          <style>
-              body {
-                  font-family: Arial, sans-serif;
-              }
-              textarea {
-                  width: 100%;
-                  height: 100%;
-                  border: none;
-                  resize: none;
-                  pointer-events: none;
-              }
-          </style>
-      </head>
-      <body>
-          <textarea readonly>${content}</textarea>
-      </body>
-      </html>
-  `;
-}
 //# sourceMappingURL=extension.js.map
