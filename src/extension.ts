@@ -1,16 +1,24 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { getNotesTree, NodeType } from './utils/getNoteTree';
 
 // 定义一个节点类来表示树中的每个元素
 class TreeNode extends vscode.TreeItem {
   constructor(
     public readonly label: string,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly command?: vscode.Command,
+    public readonly type: NodeType,
+    public readonly id: string,
   ) {
-    super(label, collapsibleState);
+    const { Collapsed, None } = vscode.TreeItemCollapsibleState;
+    const isDir = type === 'directory';
+
+    super(label, isDir ? Collapsed : None);
+
+    if (!isDir) {
+      this.iconPath = path.resolve(__dirname, '../resources/md.svg');
+    }
+
     this.tooltip = `${this.label}`;
-    this.description = '';
   }
 }
 
@@ -18,27 +26,28 @@ class TreeNode extends vscode.TreeItem {
 class TreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
   private _onDidChangeTreeData: vscode.EventEmitter<TreeNode | null> =
     new vscode.EventEmitter<TreeNode | null>();
+
   readonly onDidChangeTreeData: vscode.Event<TreeNode | null> = this._onDidChangeTreeData.event;
 
-  // 树中的数据
-  private treeNodes: TreeNode[] = [
-    new TreeNode('Parent1', vscode.TreeItemCollapsibleState.Collapsed),
-    new TreeNode('Parent2', vscode.TreeItemCollapsibleState.Collapsed),
-  ];
+  readonly notes = getNotesTree(path.resolve(__dirname, '../resources/notes'));
+
+  private treeNodes: TreeNode[] = this.notes.map(note => {
+    return new TreeNode(note.label, note.type, note.id);
+  });
 
   getTreeItem(element: TreeNode): vscode.TreeItem | Thenable<vscode.TreeItem> {
     return element;
   }
 
-  getChildren(element?: TreeNode): vscode.ProviderResult<TreeNode[]> {
+  getChildren(element: TreeNode): vscode.ProviderResult<TreeNode[]> {
     if (!element) {
       return this.treeNodes;
     }
-    // 当元素是父节点时，返回子节点
-    return [
-      new TreeNode(`${element.label} -> Child1`, vscode.TreeItemCollapsibleState.None),
-      new TreeNode(`${element.label} -> Child2`, vscode.TreeItemCollapsibleState.None),
-    ];
+    return this.notes
+      .find(note => note.id === element.id)!
+      .children!.map(note => {
+        return new TreeNode(note.label, note.type, note.id);
+      });
   }
 }
 
@@ -67,34 +76,15 @@ export function activate(context: vscode.ExtensionContext) {
     const selectedNode = event.selection[0];
 
     if (selectedNode && selectedNode.label.indexOf('Child') !== -1) {
-      console.log(selectedNode.label);
-
       const name = selectedNode.label.indexOf('Child1') !== -1 ? 'sample1.md' : 'sample2.md';
       const filePath = path.join(context.extensionPath, name);
-      console.log(filePath);
 
       vscode.workspace.openTextDocument(vscode.Uri.file(filePath)).then(
         doc => {
-          vscode.window
-            .showTextDocument(doc, {
-              preview: true,
-              preserveFocus: true,
-            })
-            .then(editor => {
-              editor
-                .edit(editBuilder => {
-                  // Do nothing, as we don't want to make any changes
-                })
-                .then(success => {
-                  if (success) {
-                    vscode.window.showInformationMessage('Markdown file opened in read-only mode.');
-                  } else {
-                    vscode.window.showErrorMessage(
-                      'Failed to open Markdown file in read-only mode.',
-                    );
-                  }
-                });
-            });
+          vscode.window.showTextDocument(doc, {
+            preview: true,
+            preserveFocus: true,
+          });
         },
         error => {
           vscode.window.showErrorMessage('Failed to open Markdown file in editor.');
