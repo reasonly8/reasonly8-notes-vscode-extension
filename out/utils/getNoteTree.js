@@ -32,15 +32,15 @@ function getNotesTree(path) {
         const item = {
             id: (0, genId_1.genId)(),
             label: path,
+            path: fullPath,
             type: 'unknown',
         };
-        console.log(fullPath);
         const stats = fs.statSync(fullPath);
         if (stats.isDirectory()) {
             item.type = 'directory';
         }
         else if (stats.isFile()) {
-            item.type === 'file';
+            item.type = 'file';
         }
         if (item.type !== 'directory') {
             return item;
@@ -50,7 +50,6 @@ function getNotesTree(path) {
         return item;
     }
     const notesTree = getDir(path, path).children;
-    console.log(notesTree);
     return notesTree;
 }
 exports.getNotesTree = getNotesTree;

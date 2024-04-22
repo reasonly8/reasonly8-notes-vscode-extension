@@ -1,30 +1,22 @@
 import * as fs from 'fs';
 import { genId } from './genId';
 import * as nodePath from 'path';
-
-export type NodeType = 'directory' | 'file' | 'unknown';
-
-type Node = {
-  label: string;
-  type: NodeType;
-  id: string;
-  children?: Node[];
-};
+import { NoteNode } from '../types';
 
 export function getNotesTree(path: string) {
-  function getDir(path: string, fullPath: string): Node {
-    const item: Node = {
+  function getDir(path: string, fullPath: string): NoteNode {
+    const item: NoteNode = {
       id: genId(),
       label: path,
+      path: fullPath,
       type: 'unknown',
     };
 
-    console.log(fullPath);
     const stats = fs.statSync(fullPath);
     if (stats.isDirectory()) {
       item.type = 'directory';
     } else if (stats.isFile()) {
-      item.type === 'file';
+      item.type = 'file';
     }
 
     if (item.type !== 'directory') {
@@ -37,6 +29,5 @@ export function getNotesTree(path: string) {
   }
 
   const notesTree = getDir(path, path).children!;
-  console.log(notesTree);
   return notesTree;
 }
