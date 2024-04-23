@@ -33,12 +33,16 @@ jobs:
           GI_API_TOKEN: ${{ secrets.GI_API_TOKEN }}
         run: node ./sync.js $GI_API_TOKEN
 
-      - name: Make Git Clean
+      - name: Make Git Clean for update version
         run: |
           git status --porcelain | grep -q . && git commit -am "docs: sync notes" || echo "No changes to commit."
 
       - name: Update version in package.json
-        run: npm version patch
+        run: npm version patch --no-git-tag-version --allow-same-version
+
+      - name: Make Git Clean for next publish
+        run: |
+          git status --porcelain | grep -q . && git commit -am "docs: sync notes" || echo "No changes to commit."
 
       - name: Build extension
         run: npm run package
