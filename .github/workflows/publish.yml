@@ -40,4 +40,4 @@ jobs:
         env:
           PERSONAL_TOKEN: ${{ secrets.AZURE_PERSONAL_TOKEN }}
         run: |
-          npm run publish -p $PERSONAL_TOKEN
+          npm run publish -- -p $PERSONAL_TOKEN
