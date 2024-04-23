@@ -23,35 +23,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNotesTree = void 0;
-const fs = __importStar(require("fs"));
-const genId_1 = require("./genId");
+exports.getNodeByPath = void 0;
 const nodePath = __importStar(require("path"));
-function getNotesTree(path) {
-    function getDir(path, fullPath) {
-        const item = {
-            id: (0, genId_1.genId)(),
-            label: path,
-            path: fullPath,
-            type: 'unknown',
-        };
-        const stats = fs.statSync(fullPath);
-        if (stats.isDirectory()) {
-            item.type = 'directory';
+function getNodeByPath(notesTree, path) {
+    let target = null;
+    const loop = (nodes) => {
+        for (let i = 0; i < nodes.length; i++) {
+            if (target) {
+                break;
+            }
+            const commonPath = nodes[i].path.split(/[\\\/]/).join(nodePath.posix.sep);
+            if (`/${commonPath}` === path) {
+                target = nodes[i];
+            }
+            nodes[i].children && loop(nodes[i].children);
         }
-        else if (stats.isFile()) {
-            item.type = 'file';
-            item.originText = fs.readFileSync(fullPath, { encoding: 'utf-8' });
-        }
-        if (item.type !== 'directory') {
-            return item;
-        }
-        const chidlPathList = fs.readdirSync(fullPath);
-        item.children = chidlPathList.map(path => getDir(path, nodePath.join(fullPath, path)));
-        return item;
-    }
-    const notesTree = getDir(path, path).children;
-    return notesTree;
+    };
+    loop(notesTree);
+    return target;
 }
-exports.getNotesTree = getNotesTree;
-//# sourceMappingURL=getNoteTree.js.map
+exports.getNodeByPath = getNodeByPath;
+//# sourceMappingURL=getNodeByPath.js.map

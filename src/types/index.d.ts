@@ -5,5 +5,6 @@ export type NoteNode = {
   type: NoteNodeType;
   id: string;
   path: string;
+  originText?: string;
   children?: NoteNode[];
 };

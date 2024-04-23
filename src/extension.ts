@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
 import { getNotesTree } from './utils/getNoteTree';
 import { NoteNodeType } from './types';
 import { getNodeById } from './utils/getNodeById';
-import * as fs from 'fs';
+import { getNodeByPath } from './utils/getNodeByPath';
 
 class TreeNode extends vscode.TreeItem {
   constructor(
@@ -67,8 +68,6 @@ class TreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
   }
 }
 
-const tempFile: { path?: string; data?: Buffer } = {};
-
 export function activate(context: vscode.ExtensionContext) {
   const treeDataProvider = new TreeDataProvider();
   vscode.window.registerTreeDataProvider('notesTree', treeDataProvider);
@@ -80,7 +79,6 @@ export function activate(context: vscode.ExtensionContext) {
   const disposable1 = vscode.commands.registerCommand('openNotes', () => {
     vscode.commands.executeCommand('workbench.view.extension.activitybar-extension');
   });
-
   context.subscriptions.push(disposable1);
 
   const disposable2 = vscode.commands.registerCommand('openContent', async () => {
@@ -102,30 +100,30 @@ export function activate(context: vscode.ExtensionContext) {
     const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(filePath));
     vscode.window.showTextDocument(doc, { preview: true, preserveFocus: true });
   });
-
   context.subscriptions.push(disposable2);
-  const disposable3 = vscode.workspace.onWillSaveTextDocument(event => {
-    event.waitUntil(
-      new Promise(() => {
-        const { path } = event.document.uri;
-        const data = fs.readFileSync(path);
-        tempFile.data = data;
-        tempFile.path = path;
-      }),
-    );
-  });
 
-  context.subscriptions.push(disposable3);
-
-  const disposable4 = vscode.workspace.onDidChangeTextDocument(event => {
-    console.log(event.document.uri.path, tempFile.path);
-
-    if (event.document.uri.path === tempFile.path && tempFile.data) {
-      fs.writeFileSync(tempFile.path, tempFile.data);
+  const disposable3 = vscode.workspace.onDidSaveTextDocument(event => {
+    const { path } = event.uri;
+    if (path.indexOf('reasonly8-notes') === -1) {
+      return;
     }
-  });
 
-  context.subscriptions.push(disposable4);
+    const target = getNodeByPath(treeDataProvider.notes, path);
+    if (!target) {
+      return;
+    }
+
+    if (target.originText === undefined) {
+      return;
+    }
+
+    vscode.window.showInformationMessage('This file is read-only.');
+
+    setTimeout(() => {
+      fs.writeFileSync(target.path, target.originText!);
+    });
+  });
+  context.subscriptions.push(disposable3);
 }
 
 export function deactivate() {}

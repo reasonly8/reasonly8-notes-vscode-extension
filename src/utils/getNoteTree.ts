@@ -17,6 +17,7 @@ export function getNotesTree(path: string) {
       item.type = 'directory';
     } else if (stats.isFile()) {
       item.type = 'file';
+      item.originText = fs.readFileSync(fullPath, { encoding: 'utf-8' });
     }
 
     if (item.type !== 'directory') {

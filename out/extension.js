@@ -26,9 +26,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
 const vscode = __importStar(require("vscode"));
 const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
 const getNoteTree_1 = require("./utils/getNoteTree");
 const getNodeById_1 = require("./utils/getNodeById");
-const fs = __importStar(require("fs"));
+const getNodeByPath_1 = require("./utils/getNodeByPath");
 class TreeNode extends vscode.TreeItem {
     label;
     type;
@@ -83,7 +84,6 @@ class TreeDataProvider {
         }) || []);
     }
 }
-const tempFile = {};
 function activate(context) {
     const treeDataProvider = new TreeDataProvider();
     vscode.window.registerTreeDataProvider('notesTree', treeDataProvider);
@@ -111,22 +111,24 @@ function activate(context) {
         vscode.window.showTextDocument(doc, { preview: true, preserveFocus: true });
     });
     context.subscriptions.push(disposable2);
-    const disposable3 = vscode.workspace.onWillSaveTextDocument(event => {
-        event.waitUntil(new Promise(() => {
-            const { path } = event.document.uri;
-            const data = fs.readFileSync(path);
-            tempFile.data = data;
-            tempFile.path = path;
-        }));
+    const disposable3 = vscode.workspace.onDidSaveTextDocument(event => {
+        const { path } = event.uri;
+        if (path.indexOf('reasonly8-notes') === -1) {
+            return;
+        }
+        const target = (0, getNodeByPath_1.getNodeByPath)(treeDataProvider.notes, path);
+        if (!target) {
+            return;
+        }
+        if (target.originText === undefined) {
+            return;
+        }
+        vscode.window.showInformationMessage('This file is read-only.');
+        setTimeout(() => {
+            fs.writeFileSync(target.path, target.originText);
+        });
     });
     context.subscriptions.push(disposable3);
-    const disposable4 = vscode.workspace.onDidChangeTextDocument(event => {
-        console.log(event.document.uri.path, tempFile.path);
-        if (event.document.uri.path === tempFile.path && tempFile.data) {
-            fs.writeFileSync(tempFile.path, tempFile.data);
-        }
-    });
-    context.subscriptions.push(disposable4);
 }
 exports.activate = activate;
 function deactivate() { }
