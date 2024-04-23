@@ -1,5 +1,5 @@
 const { Octokit } = require('octokit');
-const config = require('./.config.json');
+// const config = require('./.config.json');
 const AdmZip = require('adm-zip');
 const fs = require('fs-extra');
 
@@ -7,10 +7,14 @@ const OWNER = 'reasonly8';
 const TARGET_REPO = 'reasonly8-notes';
 const TARGET_BRANCH = 'main';
 const API_VERSION = '2022-11-28';
-const GITHUB_TOKEN = config.githubToken; // Apply Github Token: https://github.com/settings/tokens
-const DIR_RE = `^${OWNER}-${TARGET_REPO}-.{40}$`;
+const GITHUB_TOKEN = process.argv[2]; // Apply Github Token: https://github.com/settings/tokens
+const DIR_RE = `^${OWNER}-${TARGET_REPO}-.*?$`;
 const DIR = './resources';
 const FOLDER_NAME = 'notes';
+
+if (!GITHUB_TOKEN) {
+  throw new Error('`token` is not exist on command line.');
+}
 
 /**
  * Request target repository's zip file
