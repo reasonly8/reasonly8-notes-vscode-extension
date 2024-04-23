@@ -45,7 +45,7 @@ jobs:
           git status --porcelain | grep -q . && git commit -am "docs: sync notes" || echo "No changes to commit."
 
       - name: Git Push
-        run: git push origin master
+        run: git push
 
       - name: Build extension
         run: npm run package
