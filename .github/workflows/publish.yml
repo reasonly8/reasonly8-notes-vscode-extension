@@ -20,6 +20,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Set Git user and email
+        run: |
+          git config --global user.name 'reasonly8'
+          git config --global user.email 'reasonly8@sina.com'
         
       - name: Make Git Clean
         run: |
