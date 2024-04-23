@@ -25,10 +25,15 @@ jobs:
         run: |
           git config --global user.name 'reasonly8'
           git config --global user.email 'reasonly8@sina.com'
+
+      - name: Sync Notes
+        env:
+          GI_API_TOKEN: ${{ secrets.GI_API_TOKEN }}
+        run: node ./sync.js $GI_API_TOKEN
         
       - name: Make Git Clean
         run: |
-          git add . && git commit -m 'chore: ci/cd produce'
+          git add . && git commit -m 'docs: sync notes'
         
       - name: Update version in package.json
         run: npm version patch
@@ -38,6 +43,6 @@ jobs:
 
       - name: Publish extension
         env:
-          PERSONAL_TOKEN: ${{ secrets.AZURE_PERSONAL_TOKEN }}
+          AZURE_PERSONAL_TOKEN: ${{ secrets.AZURE_PERSONAL_TOKEN }}
         run: |
-          npm run publish -- -p $PERSONAL_TOKEN
+          npm run publish -- -p $AZURE_PERSONAL_TOKEN
