@@ -33,7 +33,7 @@ jobs:
 
       - name: Make Git Clean
         run: |
-          git add . && git commit -m 'docs: sync notes'
+          git status --porcelain | grep -q . && git commit -am "docs: sync notes" || echo "No changes to commit."
 
       - name: Update version in package.json
         run: npm version patch
