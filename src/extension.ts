@@ -19,7 +19,7 @@ class TreeNode extends vscode.TreeItem {
     super(label, isDir ? Collapsed : None);
 
     if (!isDir) {
-      this.iconPath = path.join(__dirname, '..', 'resources', 'md.svg');
+      this.iconPath = path.join(__dirname, '..', 'resources', 'md.png');
     }
 
     this.tooltip = this.label;

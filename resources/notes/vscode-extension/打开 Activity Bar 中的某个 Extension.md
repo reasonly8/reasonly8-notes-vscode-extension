@@ -33,11 +33,11 @@
 `src/extension.ts`
 
 ```ts
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
-  const disposable = vscode.commands.registerCommand("openNotes", () => {
-    vscode.commands.executeCommand("workbench.view.extension.reasonly8-notes");
+  const disposable = vscode.commands.registerCommand('openNotes', () => {
+    vscode.commands.executeCommand('workbench.view.extension.reasonly8-notes');
   });
 
   context.subscriptions.push(disposable);

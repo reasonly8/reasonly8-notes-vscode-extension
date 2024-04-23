@@ -44,7 +44,7 @@ class TreeNode extends vscode.TreeItem {
         this.id = id;
         this.command = command;
         if (!isDir) {
-            this.iconPath = path.join(__dirname, '..', 'resources', 'md.svg');
+            this.iconPath = path.join(__dirname, '..', 'resources', 'md.png');
         }
         this.tooltip = this.label;
     }
