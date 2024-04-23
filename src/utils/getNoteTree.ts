@@ -33,7 +33,7 @@ export function getNotesTree(path: string) {
   if (Array.isArray(notesTree)) {
     // 返回前先过滤掉 .github 中的内容
     return notesTree
-      .filter(note => note.label === '.github')
+      .filter(note => note.label !== '.github')
       .sort((a, b) => {
         if (a.type !== b.type) {
           return a.type === 'directory' ? -1 : 1;
