@@ -3,7 +3,7 @@
   "displayName": "Reasonly8 Notes",
   "description": "我的个人技术笔记",
   "author": "reasonly8",
-  "version": "0.0.4",
+  "version": "0.0.2",
   "repository": "https://github.com/reasonly8/reasonly8-notes-vscode-extension",
   "publisher": "reasonly8",
   "icon": "resources/logo.jpg",
