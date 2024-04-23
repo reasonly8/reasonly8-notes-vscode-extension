@@ -51,8 +51,8 @@
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "test-compile": "tsc -p ./",
-    "package": "npm vsce package --no-dependencies",
-    "publish": "npm vsce publish --no-dependencies"
+    "package": "vsce package",
+    "publish": "vsce publish"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
