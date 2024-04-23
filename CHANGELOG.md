@@ -1,9 +1,5 @@
 # Change Log
 
-All notable changes to the "reasonly8-notes" extension will be documented in this file.
+## v0.0.2
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+插件第一次上线，仅支持 markdown 文档的查看；

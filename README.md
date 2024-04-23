@@ -1,11 +1,3 @@
 # reasonly8-notes-vscode-extension
 
-To access my technical notes in VS Code.
-
-```sh
-# package
-pnpm package
-
-# publish
-pnpm publish
-```
+我的个人笔记查阅插件

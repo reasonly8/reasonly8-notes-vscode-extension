@@ -1,7 +1,7 @@
 {
   "name": "reasonly8-notes",
   "displayName": "Reasonly8 Notes",
-  "description": "My personal technical notes",
+  "description": "我的个人技术笔记",
   "author": "reasonly8",
   "version": "0.0.2",
   "repository": "https://github.com/reasonly8/reasonly8-notes-vscode-extension",
@@ -43,7 +43,7 @@
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "pnpm run compile && pnpm run lint",
+    "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
     "vscode:prepublish": "npm run esbuild-base -- --minify",
@@ -51,8 +51,8 @@
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "test-compile": "tsc -p ./",
-    "package": "pnpm vsce package --no-dependencies",
-    "publish": "pnpm vsce publish --no-dependencies"
+    "package": "npm vsce package --no-dependencies",
+    "publish": "npm vsce publish --no-dependencies"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
