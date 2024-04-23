@@ -40,10 +40,6 @@ jobs:
       - name: Update version in package.json
         run: npm version patch
 
-      - name: Commit version
-        run: |
-          git status --porcelain | grep -q . && git commit -am "chore: update extension version" || echo "No changes to commit."
-
       - name: Build extension
         run: npm run package
 
