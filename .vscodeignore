@@ -12,3 +12,5 @@ vsc-extension-quickstart.md
 **/.vscode-test.*
 tsconfig.json
 node_modules
+.github
+sync.js
