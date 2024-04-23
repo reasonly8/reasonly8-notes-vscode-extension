@@ -1,0 +1,34 @@
+name: Update Version and Publish Extension
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Update version in package.json
+        run: npm version patch
+
+      - name: Build extension
+        run: npm run package
+
+      - name: Publish extension
+        env:
+          PERSONAL_TOKEN: ${{ secrets.AZURE_PERSONAL_TOKEN }}
+        run: |
+          npm run publish -- --token $PERSONAL_TOKEN
