@@ -20,7 +20,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
+        
+      - name: Make Git Clean
+        run: |
+          git add . && git commit -m 'chore: ci/cd produce'
+        
       - name: Update version in package.json
         run: npm version patch
 
