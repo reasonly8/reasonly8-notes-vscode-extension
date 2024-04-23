@@ -29,6 +29,18 @@ export function getNotesTree(path: string) {
     return item;
   }
 
-  const notesTree = getDir(path, path).children!;
-  return notesTree;
+  const notesTree = getDir(path, path).children;
+  if (Array.isArray(notesTree)) {
+    // 返回前先过滤掉 .github 中的内容
+    return notesTree
+      .filter(note => note.label === '.github')
+      .sort((a, b) => {
+        if (a.type !== b.type) {
+          return a.type === 'directory' ? -1 : 1;
+        }
+        return 0;
+      });
+  } else {
+    return [];
+  }
 }
